@@ -665,7 +665,7 @@ function! s:JavaBrowser_Open_Window()
     if winnum != -1
         " Jump to the existing window
         if winnr() != winnum
-            exe winnum . 'wincmd w'
+            call s:goto_win(winnum)
         endif
     else
         " Create a new window. If user prefers a horizontal window, then open
@@ -1357,13 +1357,13 @@ function! s:JavaBrowser_Toggle_Window(bufnum)
             " Goto the taglist window, close it and then come back to the
             " original window
             let curbufnr = bufnr('%')
-            exe winnum . 'wincmd w'
+            call s:goto_win(winnum)
             close
             " Need to jump back to the original window only if we are not
             " already in that window
             let winnum = bufwinnr(curbufnr)
             if winnr() != winnum
-                exe winnum . 'wincmd w'
+                call s:goto_win(winnum)
             endif
         endif
         return
@@ -1464,7 +1464,7 @@ function! s:JavaBrowser_Refresh_Window()
     "redraw
 
     " Jump back to the original window
-    "exe cur_winnr . 'wincmd w'
+    call s:goto_win(cur_winnr)
 endfunction
 
 " JavaBrowser_Change_Sort()
@@ -1506,7 +1506,7 @@ function! s:JavaBrowser_Change_Sort()
     " Go back to the __JBrowser_List__ and highlight the current tag
     let l:bname = '__JBrowser_List__'
     let l:winnum = bufwinnr(l:bname)
-    exe l:winnum . 'wincmd w'
+    call s:goto_win(l:winnum)
     call s:JavaBrowser_Highlight_Tag(l:curbufnr, l:curline)
 endfunction
 
@@ -1541,7 +1541,7 @@ function! s:JavaBrowser_Update_Window()
     " Go back to the __JBrowser_List__ and highlight the current tag
     let l:bname = '__JBrowser_List__'
     let l:winnum = bufwinnr(l:bname)
-    exe l:winnum . 'wincmd w'
+    call s:goto_win(l:winnum)
     call s:JavaBrowser_Highlight_Tag(l:curbufnr, l:curline)
 endfunction
 
@@ -1601,7 +1601,7 @@ function! s:JavaBrowser_Jump_To_Tag(new_window)
         let l:bufflineno = b:jbrowser_to_buffer_lno_dict[l:lineno]
         
         let winnum = bufwinnr(b:jbrowser_bufnum)
-        exe winnum . 'wincmd w'
+        call s:goto_win(winnum)
         exe 'normal ' . l:bufflineno . 'G'
         " Bring the line to the middle of the window
         normal! z.
@@ -1653,6 +1653,20 @@ function! s:JavaBrowser_Show_Tag_Prototype()
     endif
 endfunction
 
+function! s:goto_win(winnr, ...) abort
+    let cmd = type(a:winnr) == type(0) ? a:winnr . 'wincmd w'
+                                     \ : 'wincmd ' . a:winnr
+    let noauto = a:0 > 0 ? a:1 : 0
+
+    "call s:debug("goto_win(): " . cmd . ", " . noauto)
+
+    if noauto
+        noautocmd execute cmd
+    else
+        execute cmd
+    endif
+endfunction
+
 " JavaBrowser_Highlight_Tag
 " Highlight tag from Javabrowser Buffer given the source line number and
 " source buffer number
@@ -1675,8 +1689,13 @@ function! s:JavaBrowser_Highlight_Tag(buf_no, linenum)
     if l:winnum == -1
         return
     endif
+
+    let prevwinnr = winnr()
+
+
+
     " Jump to the JavaBrowser window
-    exe l:winnum . 'wincmd w'
+    call s:goto_win(l:winnum)
    
     " Check if we have the current tag line no
     if !exists('b:buf_tag_line_no')
@@ -1716,10 +1735,11 @@ function! s:JavaBrowser_Highlight_Tag(buf_no, linenum)
             let b:buf_tag_line_no = l:buf_lineno
         endif
     endif
-    let l:winnum = bufwinnr(a:buf_no)
+    "let l:winnum = bufwinnr(a:buf_no)
+    let l:winnum = prevwinnr 
     if l:winnum != -1
         " Jump to the Java source window
-        exe l:winnum . 'wincmd w'
+        call s:goto_win(prevwinnr)
     endif
 endfunction
     
@@ -1735,7 +1755,7 @@ function! s:JavaBrowser_Clear_Buf_To_JBrowser_Map()
         return
     endif
     " Jump to the JavaBrowser window
-    exe l:winnum . 'wincmd w'
+    call s:goto_win(l:winnum)
    
     if !exists('b:buf_to_jbrowser_line_nos')
         return
