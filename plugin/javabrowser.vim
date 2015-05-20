@@ -1600,7 +1600,10 @@ function! s:JavaBrowser_Jump_To_Tag(new_window)
     if has_key(b:jbrowser_to_buffer_lno_dict, l:lineno)
         let l:bufflineno = b:jbrowser_to_buffer_lno_dict[l:lineno]
         
-        let winnum = bufwinnr(b:jbrowser_bufnum)
+        let winnum = winnr("#")
+        if 0 == winnum
+          let winnum = bufwinnr(b:jbrowser_bufnum)
+        endif
         call s:goto_win(winnum)
         exe 'normal ' . l:bufflineno . 'G'
         " Bring the line to the middle of the window
