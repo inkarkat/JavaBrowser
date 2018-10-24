@@ -811,6 +811,9 @@ function! s:JavaBrowser_Init_Window(bufnum)
     " window
     silent! setlocal nonumber
 
+    " The window should not be affected by resizing of other windows.
+    silent! setlocal winfixwidth
+
     " Create buffer local mappings for jumping to the tags and sorting the list
     nnoremap <buffer> <silent> <CR> :call <SID>JavaBrowser_Jump_To_Tag(0)<CR>
     nnoremap <buffer> <silent> o :call <SID>JavaBrowser_Jump_To_Tag(1)<CR>
@@ -832,10 +835,6 @@ function! s:JavaBrowser_Init_Window(bufnum)
     if g:JavaBrowser_Use_SingleClick == 1
     nnoremap <silent> <LeftMouse> <LeftMouse>:if bufname("%") =~ "__JBrowser_List__"
                         \ <bar> call <SID>JavaBrowser_Jump_To_Tag(0) <bar> endif <CR>
-    else
-        if hasmapto('<LeftMouse>')
-            nunmap <LeftMouse>
-        endif
     endif
 
     " Define the autocommand to highlight the current tag
@@ -1675,7 +1674,6 @@ endfunction
 " source buffer number
 function! s:JavaBrowser_Highlight_Tag(buf_no, linenum)
     " Set the syntx highlighting
-    call s:JavaBrowser_Set_Syntax_Highlighting()
     
     " Check if the line mapping between this buffer and Java Browser window
     " exists
@@ -1823,6 +1821,8 @@ func JavaBrowser_IntCompare(i1, i2)
     let l:i2 = str2nr(a:i2)
     return l:i1 == l:i2 ? 0 : l:i1 > l:i2 ? 1 : -1
 endfunc
+
+call s:JavaBrowser_Set_Syntax_Highlighting()
 
 " Define the 'JavaBrowser' and user commands to open/close taglist
 " window
