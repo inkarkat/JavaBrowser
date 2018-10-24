@@ -811,6 +811,9 @@ function! s:JavaBrowser_Init_Window(bufnum)
     " window
     silent! setlocal nonumber
 
+    " The window should not be affected by resizing of other windows.
+    silent! setlocal winfixwidth
+
     " Create buffer local mappings for jumping to the tags and sorting the list
     nnoremap <buffer> <silent> <CR> :call <SID>JavaBrowser_Jump_To_Tag(0)<CR>
     nnoremap <buffer> <silent> o :call <SID>JavaBrowser_Jump_To_Tag(1)<CR>
