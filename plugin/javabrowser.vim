@@ -835,10 +835,6 @@ function! s:JavaBrowser_Init_Window(bufnum)
     if g:JavaBrowser_Use_SingleClick == 1
     nnoremap <silent> <LeftMouse> <LeftMouse>:if bufname("%") =~ "__JBrowser_List__"
                         \ <bar> call <SID>JavaBrowser_Jump_To_Tag(0) <bar> endif <CR>
-    else
-        if hasmapto('<LeftMouse>')
-            nunmap <LeftMouse>
-        endif
     endif
 
     " Define the autocommand to highlight the current tag
