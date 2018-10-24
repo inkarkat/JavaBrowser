@@ -1661,7 +1661,6 @@ endfunction
 " source buffer number
 function! s:JavaBrowser_Highlight_Tag(buf_no, linenum)
     " Set the syntx highlighting
-    call s:JavaBrowser_Set_Syntax_Highlighting()
     
     " Check if the line mapping between this buffer and Java Browser window
     " exists
@@ -1803,6 +1802,8 @@ func JavaBrowser_IntCompare(i1, i2)
     let l:i2 = str2nr(a:i2)
     return l:i1 == l:i2 ? 0 : l:i1 > l:i2 ? 1 : -1
 endfunc
+
+call s:JavaBrowser_Set_Syntax_Highlighting()
 
 " Define the 'JavaBrowser' and user commands to open/close taglist
 " window
